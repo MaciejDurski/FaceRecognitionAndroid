@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -11,12 +12,14 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -101,18 +104,28 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            Matrix matrix = new Matrix();
+            matrix.postRotate(270);
 
-            imageToUpload.setImageBitmap(bitmap);
+            Bitmap rotated = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
+
+
+
+            imageToUpload.setImageBitmap(rotated);
 
         }
     }
 
 
 
-    public void send() {
+    public void send()  {
 
 
         image = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
+
+
+
+
 
 
         MessageSender messageSender = new MessageSender(MainActivity.this);

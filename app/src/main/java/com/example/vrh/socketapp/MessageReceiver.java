@@ -19,7 +19,7 @@ class MessageReceiver extends AsyncTask<Void,Void,Void>{
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
 
-        Toast.makeText(context,"welcome back",Toast.LENGTH_LONG).show();
+        Toast.makeText(context,msg,Toast.LENGTH_LONG).show();
         if(msg.equals("Not recognized")){
             Intent intent = new Intent(context,NotRecognizedActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

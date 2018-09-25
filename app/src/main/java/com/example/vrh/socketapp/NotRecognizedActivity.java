@@ -11,6 +11,8 @@ import android.widget.Toast;
 public class NotRecognizedActivity extends AppCompatActivity {
     Button login;
     EditText password;
+    EditText nameET;
+    String name;
     private static final String PASSWORD="1234";
 
     @Override
@@ -25,6 +27,13 @@ public class NotRecognizedActivity extends AppCompatActivity {
                 int i=0;
                 while (i<=3) {
                     if (PASSWORD.equals(password.getText().toString())) {
+                        nameET = (EditText) findViewById(R.id.name_ET);
+                        name=nameET.getText().toString();
+
+                        RetrainInformationSender retrainInformationSender =new  RetrainInformationSender(NotRecognizedActivity.this);
+                        retrainInformationSender.execute(name);
+
+
                         Intent intent = new Intent(NotRecognizedActivity.this, WelcomeActivity.class);
                         startActivity(intent);
                         break;

@@ -55,7 +55,7 @@ public class MessageSender extends AsyncTask<Bitmap,Void,Void> {
             byte [] b=baos.toByteArray();
             baos.close();
             encodedImage=Base64.encodeToString(b, Base64.DEFAULT);
-            //baos.close();
+
 
 
 
