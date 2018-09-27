@@ -1,5 +1,6 @@
 package com.example.vrh.socketapp;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Base64;
 import android.util.Log;
+import android.view.WindowManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
@@ -25,15 +27,33 @@ public class MessageSender extends AsyncTask<Bitmap,Void,Void> {
     String encodedImage;
     Bitmap image;
     Context context;
+    float[] data;
 
-    public MessageSender(Context context){
-        this.context=context.getApplicationContext();
+    private ProgressDialog dialog;
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        dialog.setMessage("Sending photo...");
+        dialog.show();
     }
+
+    public MessageSender(Context context, float[] data){
+        this.context=context.getApplicationContext();
+        this.data=data;
+
+        dialog = new ProgressDialog(context.getApplicationContext());
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+}
 
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        MessageReceiver messageReceiver = new MessageReceiver(context);
+
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        MessageReceiver messageReceiver = new MessageReceiver(context,data);
         messageReceiver.execute();
     }
 
@@ -48,6 +68,7 @@ public class MessageSender extends AsyncTask<Bitmap,Void,Void> {
          //zakodowanie zdjecia
 
             Log.e("message sender", "message");
+            Log.e("data from sender",Float.toString(data[0]));
 
 
            ByteArrayOutputStream baos=new  ByteArrayOutputStream();

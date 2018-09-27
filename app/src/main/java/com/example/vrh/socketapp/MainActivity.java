@@ -6,6 +6,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -44,6 +48,13 @@ public class MainActivity extends AppCompatActivity {
 
     ///////////////////////////////
 
+    private SensorManager sensorManager;
+    private Sensor gryoscopeSensor;
+    private SensorEventListener sensorEventListener;
+    private float[] gyroscopeData;
+    private float[] data;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +74,44 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+////////////////////////////////////////////////////////
+       gyroscopeData = new float[3];
 
+
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        gryoscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
+        if(gryoscopeSensor==null){
+            Toast.makeText(this,"nie ma zyroskopu",Toast.LENGTH_LONG).show();
+            finish();
+        }
+
+        sensorEventListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent sensorEvent) {
+
+                gyroscopeData=sensorEvent.values.clone();
+
+
+                System.out.println("x: "+sensorEvent.values[0]);
+                System.out.println("y: "+sensorEvent.values[1]);
+                System.out.println("z: "+sensorEvent.values[2]);
+
+
+
+
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int i) {
+
+            }
+        };
+
+
+
+        ///////////////////////////////////////////////////////////
 
         btn = (Button) findViewById(R.id.btn_send);
         btn.setOnClickListener(new View.OnClickListener() {
@@ -127,9 +175,28 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+      data= new float[3];
+        data=gyroscopeData.clone();
+        Log.e("okko",Float.toString(data[0]));
+       onPause();
 
-        MessageSender messageSender = new MessageSender(MainActivity.this);
+        MessageSender messageSender = new MessageSender(MainActivity.this,data);
         messageSender.execute(image);
+    }
+
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(sensorEventListener,gryoscopeSensor,SensorManager.SENSOR_DELAY_FASTEST);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(sensorEventListener);
     }
 
 }
